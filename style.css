@@ -452,29 +452,37 @@ body {
     .sidebar {
         flex-direction: row;
         width: 100vw;
-        height: 54px;
-        border-radius: 0 0 18px 18px;
+        height: 48px;
+        border-radius: 0 0 14px 14px;
         box-shadow: 0 2px 12px 0 rgba(180,120,200,0.07);
-        padding: 0 8px;
+        padding: 0 2px;
         align-items: center;
         justify-content: space-between;
         position: sticky;
         top: 0;
         z-index: 10;
+        min-width: 0;
     }
     .sidebar-logo {
         margin-bottom: 0;
+        font-size: 1rem;
+    }
+    .sidebar-logo img {
+        width: 28px;
+        height: 28px;
     }
     .sidebar-nav {
         flex-direction: row;
-        gap: 4px;
+        gap: 2px;
         margin-bottom: 0;
         width: auto;
     }
     .sidebar-nav a {
-        border-radius: 12px;
-        padding: 8px 8px;
-        font-size: 1.1rem;
+        border-radius: 10px;
+        padding: 6px 4px;
+        font-size: 0.98rem;
+        min-width: 36px;
+        justify-content: center;
     }
     .sidebar-footer {
         display: none;
@@ -483,43 +491,96 @@ body {
         padding-left: 0;
     }
     .topbar {
-        padding: 10px 8px 8px 8px;
-        border-radius: 0 0 18px 18px;
-        min-height: 44px;
+        padding: 6px 4px 6px 4px;
+        border-radius: 0 0 14px 14px;
+        min-height: 36px;
+    }
+    .topbar-title {
+        font-size: 1.05rem;
+    }
+    .user-avatar {
+        width: 28px;
+        height: 28px;
+        font-size: 1rem;
     }
     .dashboard-main {
-        padding: 10px 2vw 10px 2vw;
-        gap: 16px;
+        padding: 6px 1vw 6px 1vw;
+        gap: 8px;
     }
     .dashboard-cards {
-        gap: 8px;
+        gap: 4px;
+        flex-direction: column;
     }
     .dash-card {
-        min-width: 120px;
-        padding: 12px 6px 10px 6px;
+        min-width: 0;
+        width: 100%;
+        padding: 8px 4px 8px 4px;
+        font-size: 0.98rem;
+    }
+    .dash-card .icon {
+        font-size: 1.1rem;
     }
     .dashboard-insights {
-        gap: 8px;
+        gap: 4px;
+        flex-direction: column;
     }
     .insight-card {
-        padding: 10px 6px 8px 6px;
+        padding: 6px 4px 6px 4px;
+        font-size: 0.98rem;
     }
     .graph-card {
-        padding: 10px 4px 8px 4px;
+        padding: 6px 2px 6px 2px;
     }
     .dashboard-history {
-        padding: 10px 4px 8px 4px;
+        padding: 6px 2px 6px 2px;
     }
     .dashboard-form {
-        padding: 10px 4px 8px 4px;
+        padding: 6px 2px 6px 2px;
+        max-width: 100vw;
+    }
+    .dashboard-form form {
+        gap: 8px;
     }
     .input-group {
-        min-width: 90px;
+        min-width: 0;
+        max-width: 100vw;
+    }
+    .input-group label {
+        font-size: 0.98rem;
+    }
+    .input-group input {
+        font-size: 0.98rem;
+        padding: 8px;
     }
     .btn-add, .btn-glass {
-        min-width: 90px;
+        min-width: 0;
+        width: 100%;
+        font-size: 0.98rem;
+        padding: 8px 0;
+        max-width: 100vw;
+    }
+    .produtos-lista, .dashboard-produtos .produtos-lista {
+        gap: 8px;
+    }
+    .card {
+        padding: 8px 4px 8px 4px;
+        font-size: 0.98rem;
+    }
+    .card .remove-btn {
+        width: 26px;
+        height: 26px;
         font-size: 1rem;
-        padding: 10px 0;
+        top: 6px;
+        right: 6px;
+    }
+    .card .info strong {
+        font-size: 1rem;
+    }
+    .card .info span {
+        font-size: 0.95rem;
+    }
+    #lucroChart {
+        height: 160px !important;
     }
 }
 @keyframes fadeInUp {
