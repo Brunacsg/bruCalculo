@@ -259,6 +259,18 @@ if (btnImg) {
         exportWrapper.style.flexDirection = 'column';
         exportWrapper.style.gap = '18px';
         exportWrapper.style.boxShadow = '0 8px 48px 0 rgba(180,120,200,0.18)';
+        exportWrapper.style.color = '#3a1a3a';
+        exportWrapper.style.fontWeight = '700';
+        exportWrapper.style.textShadow = '0 1px 2px #fff, 0 0px 1px #b96bb8';
+
+        // Forçar cor de texto nos elementos filhos
+        setTimeout(() => {
+            exportWrapper.querySelectorAll('*').forEach(el => {
+                el.style.color = '#3a1a3a';
+                el.style.textShadow = '0 1px 2px #fff, 0 0px 1px #b96bb8';
+                el.style.fontWeight = '700';
+            });
+        }, 0);
 
         // Clonar dashboard e cards de produtos
         exportWrapper.appendChild(dashboard.cloneNode(true));
