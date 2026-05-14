@@ -68,39 +68,40 @@
                 <section class="dashboard-insights" id="insights-section">
                     <!-- Insights automáticos serão renderizados aqui pelo JS -->
                 </section>
-                <section class="dashboard-graph" id="graph-section">
-                    <div class="graph-card">
-                        <div class="graph-title"><span class="icon">📊</span> Lucro por Produto</div>
-                        <canvas id="lucroChart"></canvas>
-                    </div>
-                </section>
-
-                <section class="dashboard-form" id="form-section">
-                    <form id="product-form" autocomplete="off">
-                        <div class="input-group">
-                            <label for="nome">Nome do Produto</label>
-                            <input type="text" id="nome" required maxlength="40" placeholder="Ex: Caneca Fofa">
+                <div class="dashboard-flex-row">
+                    <section class="dashboard-form" id="form-section">
+                        <form id="product-form" autocomplete="off">
+                            <div class="input-group">
+                                <label for="nome">Nome do Produto</label>
+                                <input type="text" id="nome" required maxlength="40" placeholder="Ex: Caneca Fofa">
+                            </div>
+                            <div class="input-group">
+                                <label for="data">Data da Venda</label>
+                                <input type="date" id="data" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="custo">Custo (R$)</label>
+                                <input type="text" id="custo" required placeholder="0,00">
+                            </div>
+                            <div class="input-group">
+                                <label for="venda">Valor de Venda (R$)</label>
+                                <input type="text" id="venda" required placeholder="0,00">
+                            </div>
+                            <div class="input-group">
+                                <label for="quantidade">Quantidade Vendida</label>
+                                <input type="number" id="quantidade" required min="1" value="1">
+                            </div>
+                            <button type="submit" class="btn-add">Adicionar Produto</button>
+                            <button id="btn-img" type="button" class="btn-glass">Salvar Dados</button>
+                        </form>
+                    </section>
+                    <section class="dashboard-graph" id="graph-section">
+                        <div class="graph-card">
+                            <div class="graph-title"><span class="icon">📊</span> Lucro por Produto</div>
+                            <canvas id="lucroChart"></canvas>
                         </div>
-                        <div class="input-group">
-                            <label for="data">Data da Venda</label>
-                            <input type="date" id="data" required>
-                        </div>
-                        <div class="input-group">
-                            <label for="custo">Custo (R$)</label>
-                            <input type="text" id="custo" required placeholder="0,00">
-                        </div>
-                        <div class="input-group">
-                            <label for="venda">Valor de Venda (R$)</label>
-                            <input type="text" id="venda" required placeholder="0,00">
-                        </div>
-                        <div class="input-group">
-                            <label for="quantidade">Quantidade Vendida</label>
-                            <input type="number" id="quantidade" required min="1" value="1">
-                        </div>
-                        <button type="submit" class="btn-add">Adicionar Produto</button>
-                        <button id="btn-img" type="button" class="btn-glass">Salvar Dados</button>
-                    </form>
-                </section>
+                    </section>
+                </div>
                 <section class="dashboard-produtos" id="produtos-section" style="display:none">
                     <div class="history-title"><span class="icon">📦</span> Produtos Cadastrados</div>
                     <div id="produtos-lista-produtos" class="produtos-lista"></div>

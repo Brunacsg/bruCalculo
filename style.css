@@ -1,3 +1,34 @@
+/* Layout flex para formulário e gráfico lado a lado */
+.dashboard-flex-row {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+    justify-content: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+.dashboard-flex-row .dashboard-form {
+    flex: 1 1 340px;
+    max-width: 420px;
+    min-width: 260px;
+}
+.dashboard-flex-row .dashboard-graph {
+    flex: 1 1 340px;
+    min-width: 260px;
+    max-width: 520px;
+}
+@media (max-width: 900px) {
+    .dashboard-flex-row {
+        flex-direction: column;
+        gap: 18px;
+        align-items: stretch;
+    }
+    .dashboard-flex-row .dashboard-form,
+    .dashboard-flex-row .dashboard-graph {
+        max-width: 100vw;
+        min-width: 0;
+    }
+}
 .dashboard-form {
     display: flex;
     justify-content: center;
