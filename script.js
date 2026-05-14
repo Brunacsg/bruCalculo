@@ -2,7 +2,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const navLinks = document.querySelectorAll('.sidebar-nav a');
     const sections = {
-        dashboard: ['dashboard-section','insights-section','graph-section','history-section','form-section'],
+        dashboard: ['dashboard-section','insights-section','flex-row-section'],
         produtos: ['produtos-section'],
         relatorios: ['relatorios-section'],
         config: ['config-section']
