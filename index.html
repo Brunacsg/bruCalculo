@@ -24,10 +24,10 @@
                 <span>bruCalculo</span>
             </div>
             <nav class="sidebar-nav">
-                <a href="#" class="active"><span class="icon">🏠</span> Dashboard</a>
-                <a href="#"><span class="icon">📦</span> Produtos</a>
-                <a href="#"><span class="icon">📈</span> Relatórios</a>
-                <a href="#"><span class="icon">⚙️</span> Configurações</a>
+                <a href="#" class="active" data-section="dashboard"><span class="icon">🏠</span> Dashboard</a>
+                <a href="#" data-section="produtos"><span class="icon">📦</span> Produtos</a>
+                <a href="#" data-section="relatorios"><span class="icon">📈</span> Relatórios</a>
+                <a href="#" data-section="config"><span class="icon">⚙️</span> Configurações</a>
             </nav>
             <div class="sidebar-footer">
                 <span>Feito com <span class="icon">💜</span></span>
@@ -43,7 +43,7 @@
                 </div>
             </header>
             <main class="dashboard-main">
-                <section class="dashboard-cards" id="dashboard">
+                <section class="dashboard-cards" id="dashboard-section">
                     <div class="card dash-card">
                         <span class="icon">💰</span>
                         <span>Total Investido</span>
@@ -65,20 +65,20 @@
                         <strong id="top-produto">-</strong>
                     </div>
                 </section>
-                <section class="dashboard-insights" id="insights">
+                <section class="dashboard-insights" id="insights-section">
                     <!-- Insights automáticos serão renderizados aqui pelo JS -->
                 </section>
-                <section class="dashboard-graph">
+                <section class="dashboard-graph" id="graph-section">
                     <div class="graph-card">
                         <div class="graph-title"><span class="icon">📊</span> Lucro por Produto</div>
                         <canvas id="lucroChart"></canvas>
                     </div>
                 </section>
-                <section class="dashboard-history">
+                <section class="dashboard-history" id="history-section">
                     <div class="history-title"><span class="icon">📦</span> Histórico de Vendas</div>
                     <div id="produtos-lista" class="produtos-lista"></div>
                 </section>
-                <section class="dashboard-form">
+                <section class="dashboard-form" id="form-section">
                     <form id="product-form" autocomplete="off">
                         <div class="input-group">
                             <label for="nome">Nome do Produto</label>
@@ -103,6 +103,18 @@
                         <button type="submit" class="btn-add">Adicionar Produto</button>
                         <button id="btn-img" type="button" class="btn-glass">Salvar Dados</button>
                     </form>
+                </section>
+                <section class="dashboard-produtos" id="produtos-section" style="display:none">
+                    <div class="history-title"><span class="icon">📦</span> Produtos Cadastrados</div>
+                    <div id="produtos-lista-produtos" class="produtos-lista"></div>
+                </section>
+                <section class="dashboard-relatorios" id="relatorios-section" style="display:none">
+                    <div class="history-title"><span class="icon">📈</span> Relatórios e Exportações</div>
+                    <div style="color:#b96bb8;text-align:center;margin:32px 0;">Funcionalidade em desenvolvimento.</div>
+                </section>
+                <section class="dashboard-config" id="config-section" style="display:none">
+                    <div class="history-title"><span class="icon">⚙️</span> Configurações</div>
+                    <div style="color:#b96bb8;text-align:center;margin:32px 0;">Funcionalidade em desenvolvimento.</div>
                 </section>
             </main>
         </div>

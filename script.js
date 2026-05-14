@@ -1,3 +1,79 @@
+// Navegação SPA entre seções
+document.addEventListener('DOMContentLoaded', function() {
+    const navLinks = document.querySelectorAll('.sidebar-nav a');
+    const sections = {
+        dashboard: ['dashboard-section','insights-section','graph-section','history-section','form-section'],
+        produtos: ['produtos-section'],
+        relatorios: ['relatorios-section'],
+        config: ['config-section']
+    };
+    function showSection(key) {
+        // Esconde todas as seções
+        document.querySelectorAll('.dashboard-main > section').forEach(sec => sec.style.display = 'none');
+        // Mostra as do grupo
+        (sections[key]||[]).forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = '';
+        });
+        // Ativa link
+        navLinks.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector('.sidebar-nav a[data-section="'+key+'"]');
+        if (active) active.classList.add('active');
+    }
+    navLinks.forEach(link => {
+        link.addEventListener('click', e => {
+            e.preventDefault();
+            const sec = link.getAttribute('data-section');
+            showSection(sec);
+            // Produtos: renderizar lista
+            if (sec === 'produtos') renderizarProdutosProdutos();
+        });
+    });
+    // Inicial: dashboard
+    showSection('dashboard');
+
+    // Modal de perfil
+    const avatar = document.querySelector('.user-avatar');
+    if (avatar) {
+        avatar.style.cursor = 'pointer';
+        avatar.addEventListener('click', () => {
+            let modal = document.createElement('div');
+            modal.className = 'modal-perfil';
+            modal.innerHTML = `<div class='modal-content'><h2>Perfil</h2><p>Usuária: <b>Bruna</b></p><button class='btn-glass close-modal'>Fechar</button></div>`;
+            Object.assign(modal.style, {position:'fixed',top:0,left:0,width:'100vw',height:'100vh',background:'rgba(0,0,0,0.18)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:9999});
+            modal.querySelector('.close-modal').onclick = () => document.body.removeChild(modal);
+            document.body.appendChild(modal);
+        });
+    }
+});
+
+// Renderizar lista de produtos na aba Produtos
+function renderizarProdutosProdutos() {
+    const lista = document.getElementById('produtos-lista-produtos');
+    if (!lista) return;
+    if (produtos.length === 0) {
+        lista.innerHTML = '<p style="text-align:center;color:#b96bb8;">Nenhum produto cadastrado ainda.</p>';
+        return;
+    }
+    lista.innerHTML = '';
+    produtos.forEach((p, idx) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+            <div class="info">
+                <strong>${p.nome}</strong>
+                <span>Data: <b>${formatarDataBR(p.data)}</b></span>
+                <span>Custo: <b>${formatarMoeda(p.custo)}</b></span>
+                <span>Venda: <b>${formatarMoeda(p.venda)}</b></span>
+                <span>Qtd: <b>${p.quantidade}</b></span>
+                <span>Lucro/un: <b>${formatarMoeda(p.lucroUnidade)}</b></span>
+                <span>Lucro total: <b>${formatarMoeda(p.lucroTotal)}</b></span>
+                <span>Margem: <b>${p.porcentagemLucro}%</b></span>
+            </div>
+        `;
+        lista.appendChild(card);
+    });
+}
 // script.js
 // Controle de Lucro de Produtos - Mobile First, Glassmorphism, Chart.js
 
