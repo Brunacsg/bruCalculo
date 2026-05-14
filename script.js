@@ -27,10 +27,181 @@ document.addEventListener('DOMContentLoaded', function() {
             showSection(sec);
             // Produtos: renderizar lista
             if (sec === 'produtos') renderizarProdutosProdutos();
+            // Reforçar eventos do formulário e botão de imagem ao exibir seção de cadastro
+            if (sec === 'dashboard') {
+                reforcarEventosForm();
+            }
         });
     });
     // Inicial: dashboard
     showSection('dashboard');
+    // Reforçar eventos ao carregar
+    reforcarEventosForm();
+// Garante que os eventos do formulário e do botão de imagem estejam sempre ativos
+function reforcarEventosForm() {
+    const form = document.getElementById('product-form');
+    const btnImg = document.getElementById('btn-img');
+    if (form && !form._eventBound) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nome = nomeInput.value.trim();
+            const data = dataInput.value;
+            const custo = parseMoeda(custoInput.value);
+            const venda = parseMoeda(vendaInput.value);
+            const quantidade = parseInt(quantidadeInput.value, 10);
+            const erro = validarCampos(nome, data, custo, venda, quantidade);
+            if (erro) {
+                alert(erro);
+                return;
+            }
+            const lucroUnidade = venda - custo;
+            const lucroTotal = lucroUnidade * quantidade;
+            const porcentagemLucro = custo > 0 ? ((lucroUnidade / custo) * 100).toFixed(1) : '0.0';
+            produtos.push({
+                nome,
+                data,
+                custo,
+                venda,
+                quantidade,
+                lucroUnidade,
+                lucroTotal,
+                porcentagemLucro
+            });
+            salvarProdutos();
+            atualizarDashboard();
+            renderizarProdutos();
+            form.reset();
+            custoInput.value = '';
+            vendaInput.value = '';
+            quantidadeInput.value = 1;
+            nomeInput.focus();
+        });
+        form._eventBound = true;
+    }
+    if (btnImg && !btnImg._eventBound) {
+        btnImg.addEventListener('click', async function() {
+            // ...código de exportação já existente...
+            let overlay = document.createElement('div');
+            overlay.id = 'img-loading-overlay';
+            overlay.style.position = 'fixed';
+            overlay.style.top = 0;
+            overlay.style.left = 0;
+            overlay.style.width = '100vw';
+            overlay.style.height = '100vh';
+            overlay.style.background = 'rgba(255,255,255,0.7)';
+            overlay.style.display = 'flex';
+            overlay.style.alignItems = 'center';
+            overlay.style.justifyContent = 'center';
+            overlay.style.zIndex = 9999;
+            overlay.innerHTML = '<div style="background:rgba(255,255,255,0.9);padding:24px 32px;border-radius:18px;box-shadow:0 4px 24px 0 rgba(180,120,200,0.13);font-size:1.2rem;color:#b96bb8;display:flex;align-items:center;gap:10px;"><span class="loader" style="width:24px;height:24px;border:3px solid #e9b6d2;border-top:3px solid #b96bb8;border-radius:50%;display:inline-block;animation:spin 1s linear infinite;"></span>Gerando imagem premium...</div>';
+            document.body.appendChild(overlay);
+            const dashboard = document.getElementById('dashboard');
+            const produtosLista = document.getElementById('produtos-lista');
+            const chartCanvas = document.getElementById('lucroChart');
+            if (!dashboard || !produtosLista || !chartCanvas) {
+                document.body.removeChild(overlay);
+                alert('Não foi possível capturar os dados.');
+                return;
+            }
+            let totalInvestido = document.getElementById('total-investido').textContent;
+            let totalVendido = document.getElementById('total-vendido').textContent;
+            let lucroTotal = document.getElementById('lucro-total').textContent;
+            let qtdVendas = 0;
+            let topProduto = '';
+            let maiorLucro = -Infinity;
+            let produtos = [];
+            produtosLista.querySelectorAll('.card').forEach(card => {
+                let nome = card.querySelector('strong')?.textContent || '';
+                let lucro = 0;
+                card.querySelectorAll('span').forEach(span => {
+                    if (span.textContent.toLowerCase().includes('lucro total')) {
+                        let val = span.querySelector('b')?.textContent?.replace(/[^
+,.-]/g, '').replace(',', '.') || '0';
+                        lucro = parseFloat(val);
+                    }
+                });
+                produtos.push({ nome, lucro });
+                if (lucro > maiorLucro) {
+                    maiorLucro = lucro;
+                    topProduto = nome;
+                }
+                qtdVendas++;
+            });
+            let chartImg = chartCanvas.toDataURL('image/png', 1.0);
+            let dataAtual = new Date();
+            let dataStr = dataAtual.toLocaleDateString('pt-BR');
+            const exportDiv = document.createElement('div');
+            exportDiv.id = 'export-image';
+            exportDiv.innerHTML = `
+            <div class="export-gradient">
+                <div class="export-header">
+                    <div class="export-title"><span class="icon">📊</span> Relatório de Vendas</div>
+                    <div class="export-subtitle">Resumo financeiro do período</div>
+                    <div class="export-date">${dataStr}</div>
+                </div>
+                <div class="export-dashboard">
+                    <div class="export-card">
+                        <span class="icon">💰</span>
+                        <span>Total Investido</span>
+                        <strong>${totalInvestido}</strong>
+                    </div>
+                    <div class="export-card">
+                        <span class="icon">🛒</span>
+                        <span>Total Vendido</span>
+                        <strong>${totalVendido}</strong>
+                    </div>
+                    <div class="export-card">
+                        <span class="icon">📈</span>
+                        <span>Lucro Total</span>
+                        <strong>${lucroTotal}</strong>
+                    </div>
+                    <div class="export-card">
+                        <span class="icon">🏆</span>
+                        <span>Top Produto</span>
+                        <strong>${topProduto || '-'}</strong>
+                    </div>
+                </div>
+                <div class="export-section">
+                    <div class="export-section-title">Gráfico de Lucro</div>
+                    <img src="${chartImg}" class="export-chart-img" alt="Gráfico de Lucro" />
+                </div>
+                <div class="export-section">
+                    <div class="export-section-title">Histórico de Vendas</div>
+                    <div class="export-historico">
+                        ${produtos.length > 0 ? produtos.map(p => `<div class='export-produto'><span class='icon'>📦</span> <b>${p.nome}</b> <span class='lucro'>${p.lucro.toLocaleString('pt-BR', {style:'currency',currency:'BRL'})}</span></div>`).join('') : '<div class="export-vazio">Nenhuma venda registrada.</div>'}
+                    </div>
+                </div>
+                <div class="export-resumo">
+                    <div><span class="icon">🔢</span> Total de vendas realizadas: <b>${qtdVendas}</b></div>
+                    <div><span class="icon">💡</span> Margem de lucro: <b>${lucroTotal && totalInvestido && totalInvestido !== 'R$ 0,00' ? ((parseFloat(lucroTotal.replace(/[^\d,.-]/g, '').replace(',', '.')) / parseFloat(totalInvestido.replace(/[^\d,.-]/g, '').replace(',', '.')) * 100).toFixed(1) : '0.0'}%</b></div>
+                </div>
+                <div class="export-motivacional">✨ Continue crescendo! Compartilhe seu sucesso. ✨</div>
+                <div class="export-footer">Feito com <span class="icon">💜</span> por Bruna | bruCalculo</div>
+            </div>
+            `;
+            document.body.appendChild(exportDiv);
+            await new Promise(r => setTimeout(r, 100));
+            await html2canvas(exportDiv, {
+                backgroundColor: "#fff",
+                scale: 3,
+                useCORS: true,
+                allowTaint: true
+            }).then(canvas => {
+                let data = new Date();
+                let dataStr = data.toISOString().slice(0,10);
+                let link = document.createElement('a');
+                link.download = `relatorio-vendas-${dataStr}.jpg`;
+                link.href = canvas.toDataURL('image/jpeg', 0.98);
+                link.click();
+            }).catch(() => {
+                alert('Erro ao gerar imagem.');
+            });
+            document.body.removeChild(overlay);
+            document.body.removeChild(exportDiv);
+        });
+        btnImg._eventBound = true;
+    }
+}
 
     // Modal de perfil
     const avatar = document.querySelector('.user-avatar');
