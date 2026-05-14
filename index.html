@@ -22,6 +22,10 @@
                     <input type="text" id="nome" required maxlength="40" placeholder="Ex: Caneca Fofa">
                 </div>
                 <div class="input-group">
+                    <label for="data">Data da Venda</label>
+                    <input type="date" id="data" required>
+                </div>
+                <div class="input-group">
                     <label for="custo">Custo (R$)</label>
                     <input type="text" id="custo" required placeholder="0,00">
                 </div>
@@ -50,6 +54,10 @@
                 </div>
             </section>
             <section id="produtos-lista" class="produtos-lista"></section>
+                        <div style="text-align:right;margin-bottom:18px;">
+                            <button id="btn-pdf" type="button" class="btn-add" style="width:auto;padding:10px 18px;font-size:1rem;">Gerar Relatório PDF</button>
+                        </div>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
             <section class="grafico-section">
                 <canvas id="lucroChart"></canvas>
             </section>
