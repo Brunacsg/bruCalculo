@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle de Lucro de Produtos</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#b96bb8">
+    <meta name="background-color" content="#f8e1f4">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#b96bb8">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,6 +21,34 @@
         <header>
             <h1>💖 Controle de Lucro</h1>
         </header>
+        <div id="installBanner" style="display:none;text-align:center;margin-bottom:10px;">
+            <button id="btnInstall" class="btn-add" style="width:auto;padding:10px 18px;font-size:1rem;">Instalar App</button>
+        </div>
+            <script src="service-worker-register.js"></script>
+            <script>
+            // Instalação PWA
+            let deferredPrompt;
+            const installBanner = document.getElementById('installBanner');
+            const btnInstall = document.getElementById('btnInstall');
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                if (installBanner) installBanner.style.display = 'block';
+            });
+            if (btnInstall) {
+                btnInstall.addEventListener('click', async () => {
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        const { outcome } = await deferredPrompt.userChoice;
+                        if (outcome === 'accepted') installBanner.style.display = 'none';
+                        deferredPrompt = null;
+                    }
+                });
+            }
+            window.addEventListener('appinstalled', () => {
+                if (installBanner) installBanner.style.display = 'none';
+            });
+            </script>
         <main>
             <form id="product-form" autocomplete="off">
                 <div class="input-group">

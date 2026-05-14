@@ -236,24 +236,41 @@ if (btnPDF) {
         // Cabeçalho da tabela
         doc.setFontSize(10);
         doc.setFont('helvetica', 'bold');
-        doc.text('Produto', 10, y);
-        doc.text('Data', 50, y);
-        doc.text('Custo', 75, y);
-        doc.text('Venda', 100, y);
-        doc.text('Qtd', 125, y);
-        doc.text('Lucro/un', 140, y);
-        doc.text('Lucro total', 165, y);
-        y += 5;
+        // Definir larguras das colunas
+        const colunas = [
+            { label: 'Produto', width: 40 },
+            { label: 'Data', width: 22 },
+            { label: 'Custo', width: 22 },
+            { label: 'Venda', width: 22 },
+            { label: 'Qtd', width: 14 },
+            { label: 'Lucro/un', width: 22 },
+            { label: 'Lucro total', width: 28 }
+        ];
+        let x = 10;
+        colunas.forEach(col => {
+            doc.text(col.label, x, y, { align: 'left' });
+            x += col.width;
+        });
+        y += 6;
         doc.setFont('helvetica', 'normal');
         // Linhas da tabela
         produtos.forEach((p) => {
-            doc.text(p.nome, 10, y);
-            doc.text(p.data ? formatarDataBR(p.data) : '-', 50, y);
-            doc.text(formatarMoeda(p.custo), 75, y, { align: 'right' });
-            doc.text(formatarMoeda(p.venda), 100, y, { align: 'right' });
-            doc.text(String(p.quantidade), 125, y, { align: 'right' });
-            doc.text(formatarMoeda(p.lucroUnidade), 140, y, { align: 'right' });
-            doc.text(formatarMoeda(p.lucroTotal), 165, y, { align: 'right' });
+            let x = 10;
+            // Truncar nome se muito longo
+            let nome = p.nome.length > 20 ? p.nome.substring(0, 19) + '…' : p.nome;
+            doc.text(nome, x, y, { maxWidth: colunas[0].width - 2, align: 'left' });
+            x += colunas[0].width;
+            doc.text(p.data ? formatarDataBR(p.data) : '-', x, y, { align: 'left' });
+            x += colunas[1].width;
+            doc.text(formatarMoeda(p.custo), x, y, { align: 'right' });
+            x += colunas[2].width;
+            doc.text(formatarMoeda(p.venda), x, y, { align: 'right' });
+            x += colunas[3].width;
+            doc.text(String(p.quantidade), x, y, { align: 'right' });
+            x += colunas[4].width;
+            doc.text(formatarMoeda(p.lucroUnidade), x, y, { align: 'right' });
+            x += colunas[5].width;
+            doc.text(formatarMoeda(p.lucroTotal), x, y, { align: 'right' });
             y += 7;
             if (y > 270) {
                 doc.addPage();
@@ -271,9 +288,9 @@ if (btnPDF) {
         doc.setFont('helvetica', 'bold');
         doc.text('Totais:', 10, y);
         doc.setFont('helvetica', 'normal');
-        doc.text(`Investido: ${formatarMoeda(investido)}`, 40, y);
-        doc.text(`Vendido: ${formatarMoeda(vendido)}`, 90, y);
-        doc.text(`Lucro: ${formatarMoeda(lucro)}`, 140, y);
+        doc.text(`Investido: ${formatarMoeda(investido)}`, 50, y);
+        doc.text(`Vendido: ${formatarMoeda(vendido)}`, 100, y);
+        doc.text(`Lucro: ${formatarMoeda(lucro)}`, 150, y);
         // Download
         doc.save('relatorio_lucro.pdf');
     });
