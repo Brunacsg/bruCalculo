@@ -116,7 +116,7 @@ function reforcarEventosForm() {
             let qtdVendas = 0;
             let topProduto = '';
             let maiorLucro = -Infinity;
-            let produtos = [];
+            // Removido: let produtos = [];
             produtosLista.querySelectorAll('.card').forEach(card => {
                 let nome = card.querySelector('strong')?.textContent || '';
                 let lucro = 0;
@@ -592,7 +592,7 @@ function validarCampos(nome, data, custo, venda, quantidade) {
                 let qtdVendas = 0;
                 let topProduto = '';
                 let maiorLucro = -Infinity;
-                let produtos = [];
+                // Removido: let produtos = [];
                 produtosLista.querySelectorAll('.card').forEach(card => {
                         let nome = card.querySelector('strong')?.textContent || '';
                         let lucro = 0;
