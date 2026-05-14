@@ -41,7 +41,9 @@ document.addEventListener('DOMContentLoaded', function() {
 function reforcarEventosForm() {
     const form = document.getElementById('product-form');
     const btnImg = document.getElementById('btn-img');
-    if (form && !form._eventBound) {
+    if (form) {
+        // Remove qualquer evento antigo para evitar duplicidade
+        form.onsubmit = null;
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             // Buscar elementos do formulário no momento do submit
@@ -82,7 +84,6 @@ function reforcarEventosForm() {
             quantidadeInput.value = 1;
             nomeInput.focus();
         });
-        form._eventBound = true;
     }
     if (btnImg && !btnImg._eventBound) {
         btnImg.addEventListener('click', async function() {
