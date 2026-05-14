@@ -239,38 +239,14 @@ if (btnImg) {
         overlay.innerHTML = '<div style="background:rgba(255,255,255,0.9);padding:24px 32px;border-radius:18px;box-shadow:0 4px 24px 0 rgba(180,120,200,0.13);font-size:1.2rem;color:#b96bb8;display:flex;align-items:center;gap:10px;"><span class="loader" style="width:24px;height:24px;border:3px solid #e9b6d2;border-top:3px solid #b96bb8;border-radius:50%;display:inline-block;animation:spin 1s linear infinite;"></span>Gerando imagem...</div>';
         document.body.appendChild(overlay);
 
-        // Opção de formato story
-        let formatoStory = confirm('Deseja salvar no formato Story (1080x1920)? Clique em Cancelar para capturar como está na tela.');
-        let scale = formatoStory ? 3 : window.devicePixelRatio || 2;
-        let width = formatoStory ? 1080 : container.offsetWidth;
-        let height = formatoStory ? 1920 : container.offsetHeight;
-
-        // Wrapper para margens e sombra
-        let wrapper = document.createElement('div');
-        wrapper.style.background = '#f8e1f4';
-        wrapper.style.padding = formatoStory ? '60px 30px' : '32px 8px';
-        wrapper.style.borderRadius = '32px';
-        wrapper.style.boxShadow = '0 8px 48px 0 rgba(180,120,200,0.18)';
-        wrapper.style.display = 'flex';
-        wrapper.style.justifyContent = 'center';
-        wrapper.style.alignItems = 'center';
-        wrapper.style.width = width + 'px';
-        wrapper.style.height = height + 'px';
-        wrapper.style.overflow = 'hidden';
-        wrapper.appendChild(container.cloneNode(true));
-        document.body.appendChild(wrapper);
-
-        // Captura
-        await html2canvas(wrapper, {
+        // Captura direta do container visível, sem prompt
+        await html2canvas(container, {
             backgroundColor: '#f8e1f4',
-            scale: scale,
-            width: width,
-            height: height,
+            scale: window.devicePixelRatio || 2,
             useCORS: true,
             allowTaint: true,
             scrollY: -window.scrollY
         }).then(canvas => {
-            // Download
             let data = new Date();
             let dataStr = data.toISOString().slice(0,10);
             let link = document.createElement('a');
@@ -281,9 +257,8 @@ if (btnImg) {
             alert('Erro ao gerar imagem.');
         });
 
-        // Remover overlay e wrapper
+        // Remover overlay
         document.body.removeChild(overlay);
-        document.body.removeChild(wrapper);
     });
 }
 
