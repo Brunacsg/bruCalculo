@@ -44,6 +44,12 @@ function reforcarEventosForm() {
     if (form && !form._eventBound) {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
+            // Buscar elementos do formulário no momento do submit
+            const nomeInput = form.querySelector('#nome');
+            const dataInput = form.querySelector('#data');
+            const custoInput = form.querySelector('#custo');
+            const vendaInput = form.querySelector('#venda');
+            const quantidadeInput = form.querySelector('#quantidade');
             const nome = nomeInput.value.trim();
             const data = dataInput.value;
             const custo = parseMoeda(custoInput.value);
