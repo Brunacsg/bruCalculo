@@ -239,8 +239,37 @@ if (btnImg) {
         overlay.innerHTML = '<div style="background:rgba(255,255,255,0.9);padding:24px 32px;border-radius:18px;box-shadow:0 4px 24px 0 rgba(180,120,200,0.13);font-size:1.2rem;color:#b96bb8;display:flex;align-items:center;gap:10px;"><span class="loader" style="width:24px;height:24px;border:3px solid #e9b6d2;border-top:3px solid #b96bb8;border-radius:50%;display:inline-block;animation:spin 1s linear infinite;"></span>Gerando imagem...</div>';
         document.body.appendChild(overlay);
 
-        // Captura direta do container visível, sem prompt
-        await html2canvas(container, {
+        // Captura apenas dashboard e cards de produtos
+        const dashboard = document.getElementById('dashboard');
+        const produtosLista = document.getElementById('produtos-lista');
+        if (!dashboard || !produtosLista) {
+            document.body.removeChild(overlay);
+            alert('Não foi possível capturar os dados.');
+            return;
+        }
+
+        // Criar wrapper temporário para exportação
+        const exportWrapper = document.createElement('div');
+        exportWrapper.style.background = '#f8e1f4';
+        exportWrapper.style.padding = '24px 8px';
+        exportWrapper.style.borderRadius = '24px';
+        exportWrapper.style.maxWidth = '430px';
+        exportWrapper.style.margin = '0 auto';
+        exportWrapper.style.display = 'flex';
+        exportWrapper.style.flexDirection = 'column';
+        exportWrapper.style.gap = '18px';
+        exportWrapper.style.boxShadow = '0 8px 48px 0 rgba(180,120,200,0.18)';
+
+        // Clonar dashboard e cards de produtos
+        exportWrapper.appendChild(dashboard.cloneNode(true));
+        if (produtosLista.childElementCount > 0) {
+            const cardsClone = produtosLista.cloneNode(true);
+            exportWrapper.appendChild(cardsClone);
+        }
+
+        document.body.appendChild(exportWrapper);
+
+        await html2canvas(exportWrapper, {
             backgroundColor: '#f8e1f4',
             scale: window.devicePixelRatio || 2,
             useCORS: true,
@@ -250,15 +279,16 @@ if (btnImg) {
             let data = new Date();
             let dataStr = data.toISOString().slice(0,10);
             let link = document.createElement('a');
-            link.download = `resultado-vendas-${dataStr}.png`;
-            link.href = canvas.toDataURL('image/png', 1.0);
+            link.download = `resultado-vendas-${dataStr}.jpg`;
+            link.href = canvas.toDataURL('image/jpeg', 0.95);
             link.click();
         }).catch(() => {
             alert('Erro ao gerar imagem.');
         });
 
-        // Remover overlay
+        // Remover overlay e wrapper temporário
         document.body.removeChild(overlay);
+        document.body.removeChild(exportWrapper);
     });
 }
 
