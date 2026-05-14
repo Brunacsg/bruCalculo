@@ -271,18 +271,6 @@ function parseMoeda(valor) {
     return parseFloat(valor.replace(/\./g, '').replace(',', '.'));
 }
 
-// DOM Elements
-const form = document.getElementById('product-form');
-const nomeInput = document.getElementById('nome');
-const dataInput = document.getElementById('data');
-const custoInput = document.getElementById('custo');
-const vendaInput = document.getElementById('venda');
-const quantidadeInput = document.getElementById('quantidade');
-const produtosLista = document.getElementById('produtos-lista');
-const totalInvestido = document.getElementById('total-investido');
-const totalVendido = document.getElementById('total-vendido');
-const lucroTotal = document.getElementById('lucro-total');
-const btnPDF = document.getElementById('btn-pdf');
 let lucroChart;
 
 // Estado
@@ -305,13 +293,17 @@ function atualizarDashboard() {
         vendido += p.venda * p.quantidade;
         lucro += (p.venda - p.custo) * p.quantidade;
     });
-    totalInvestido.textContent = formatarMoeda(investido);
-    totalVendido.textContent = formatarMoeda(vendido);
-    lucroTotal.textContent = formatarMoeda(lucro);
+    const totalInvestido = document.getElementById('total-investido');
+    const totalVendido = document.getElementById('total-vendido');
+    const lucroTotal = document.getElementById('lucro-total');
+    if (totalInvestido) totalInvestido.textContent = formatarMoeda(investido);
+    if (totalVendido) totalVendido.textContent = formatarMoeda(vendido);
+    if (lucroTotal) lucroTotal.textContent = formatarMoeda(lucro);
 }
 
 // Renderizar Lista de Produtos
 function renderizarProdutos() {
+    const produtosLista = document.getElementById('produtos-lista');
     produtosLista.innerHTML = '';
     const insightsDiv = document.getElementById('insights');
     if (insightsDiv) insightsDiv.innerHTML = '';
