@@ -263,10 +263,9 @@ if (btnImg) {
         exportWrapper.style.fontWeight = '700';
         exportWrapper.style.textShadow = 'none';
 
-        // Forçar fundo branco e texto preto nos elementos filhos
+        // Forçar apenas texto preto nos elementos filhos (sem sobrescrever fundo)
         setTimeout(() => {
             exportWrapper.querySelectorAll('*').forEach(el => {
-                el.style.background = '#fff';
                 el.style.color = '#111';
                 el.style.textShadow = 'none';
                 el.style.fontWeight = '700';
