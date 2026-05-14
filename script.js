@@ -250,7 +250,7 @@ if (btnImg) {
 
         // Criar wrapper temporário para exportação
         const exportWrapper = document.createElement('div');
-        exportWrapper.style.background = '#f8e1f4';
+        exportWrapper.style.background = '#fff';
         exportWrapper.style.padding = '24px 8px';
         exportWrapper.style.borderRadius = '24px';
         exportWrapper.style.maxWidth = '430px';
@@ -259,15 +259,16 @@ if (btnImg) {
         exportWrapper.style.flexDirection = 'column';
         exportWrapper.style.gap = '18px';
         exportWrapper.style.boxShadow = '0 8px 48px 0 rgba(180,120,200,0.18)';
-        exportWrapper.style.color = '#3a1a3a';
+        exportWrapper.style.color = '#111';
         exportWrapper.style.fontWeight = '700';
-        exportWrapper.style.textShadow = '0 1px 2px #fff, 0 0px 1px #b96bb8';
+        exportWrapper.style.textShadow = 'none';
 
-        // Forçar cor de texto nos elementos filhos
+        // Forçar fundo branco e texto preto nos elementos filhos
         setTimeout(() => {
             exportWrapper.querySelectorAll('*').forEach(el => {
-                el.style.color = '#3a1a3a';
-                el.style.textShadow = '0 1px 2px #fff, 0 0px 1px #b96bb8';
+                el.style.background = '#fff';
+                el.style.color = '#111';
+                el.style.textShadow = 'none';
                 el.style.fontWeight = '700';
             });
         }, 0);
