@@ -59,11 +59,15 @@ function atualizarDashboard() {
 // Renderizar Lista de Produtos
 function renderizarProdutos() {
     produtosLista.innerHTML = '';
+    const insightsDiv = document.getElementById('insights');
+    if (insightsDiv) insightsDiv.innerHTML = '';
     if (produtos.length === 0) {
         produtosLista.innerHTML = '<p style="text-align:center;color:#b96bb8;">Nenhum produto cadastrado ainda.</p>';
+        if (insightsDiv) insightsDiv.innerHTML = '<div class="insight-card"><span class="icon">💡</span>Adicione produtos para ver insights automáticos!</div>';
         atualizarGrafico();
         return;
     }
+    let totalLucro = 0, totalVendas = 0, maiorLucro = -Infinity, topProduto = '', vendasRecentes = 0, ticketMedio = 0, datas = [];
     produtos.forEach((p, idx) => {
         const card = document.createElement('div');
         card.className = 'card';
@@ -71,7 +75,7 @@ function renderizarProdutos() {
             <button class="remove-btn" title="Remover" onclick="removerProduto(${idx})">✖</button>
             <div class="info">
                 <strong>${p.nome}</strong>
-                <span>Data: <b>${p.data ? formatarDataBR(p.data) : '-'}</b></span>
+                <span>Data: <b>${formatarDataBR(p.data)}</b></span>
                 <span>Custo: <b>${formatarMoeda(p.custo)}</b></span>
                 <span>Venda: <b>${formatarMoeda(p.venda)}</b></span>
                 <span>Qtd: <b>${p.quantidade}</b></span>
@@ -80,8 +84,44 @@ function renderizarProdutos() {
                 <span>Margem: <b>${p.porcentagemLucro}%</b></span>
             </div>
         `;
+        card.style.animationDelay = (idx * 0.07) + 's';
         produtosLista.appendChild(card);
+        totalLucro += p.lucroTotal;
+        totalVendas += p.quantidade;
+        if (p.lucroTotal > maiorLucro) {
+            maiorLucro = p.lucroTotal;
+            topProduto = p.nome;
+        }
+        datas.push(p.data);
     });
+    // Insights inteligentes
+    if (insightsDiv) {
+        let cards = [];
+        // Top produto
+        cards.push(`<div class='insight-card'><span class='icon'>🏆</span>Top produto: <b>${topProduto}</b> (${formatarMoeda(maiorLucro)})</div>`);
+        // Ticket médio
+        ticketMedio = totalLucro / totalVendas;
+        cards.push(`<div class='insight-card'><span class='icon'>💳</span>Ticket médio: <b>${formatarMoeda(ticketMedio)}</b></div>`);
+        // Vendas recentes (últimos 7 dias)
+        const hoje = new Date();
+        vendasRecentes = produtos.filter(p => {
+            if (!p.data) return false;
+            const dataVenda = new Date(p.data);
+            return (hoje - dataVenda) / (1000*60*60*24) <= 7;
+        }).length;
+        cards.push(`<div class='insight-card'><span class='icon'>⏱️</span>Vendas nos últimos 7 dias: <b>${vendasRecentes}</b></div>`);
+        // Crescimento (comparação entre primeira e última venda)
+        datas.sort();
+        let crescimento = '-';
+        if (datas.length > 1) {
+            const primeira = new Date(datas[0]);
+            const ultima = new Date(datas[datas.length-1]);
+            const dias = (ultima-primeira)/(1000*60*60*24);
+            crescimento = dias > 0 ? ((totalLucro/dias).toFixed(2)) : '-';
+        }
+        cards.push(`<div class='insight-card'><span class='icon'>📈</span>Crescimento médio diário: <b>${crescimento === '-' ? '-' : formatarMoeda(crescimento)}</b></div>`);
+        insightsDiv.innerHTML = cards.join('');
+    }
     atualizarGrafico();
 }
 
@@ -218,90 +258,140 @@ function formatarDataBR(dataISO) {
 // Salvar como Imagem (html2canvas)
 const btnImg = document.getElementById('btn-img');
 if (btnImg) {
-    btnImg.addEventListener('click', async function() {
-        // Elemento a capturar: container principal
-        const container = document.querySelector('.container');
-        if (!container) return;
+        btnImg.addEventListener('click', async function() {
+                // Overlay de loading
+                let overlay = document.createElement('div');
+                overlay.id = 'img-loading-overlay';
+                overlay.style.position = 'fixed';
+                overlay.style.top = 0;
+                overlay.style.left = 0;
+                overlay.style.width = '100vw';
+                overlay.style.height = '100vh';
+                overlay.style.background = 'rgba(255,255,255,0.7)';
+                overlay.style.display = 'flex';
+                overlay.style.alignItems = 'center';
+                overlay.style.justifyContent = 'center';
+                overlay.style.zIndex = 9999;
+                overlay.innerHTML = '<div style="background:rgba(255,255,255,0.9);padding:24px 32px;border-radius:18px;box-shadow:0 4px 24px 0 rgba(180,120,200,0.13);font-size:1.2rem;color:#b96bb8;display:flex;align-items:center;gap:10px;"><span class="loader" style="width:24px;height:24px;border:3px solid #e9b6d2;border-top:3px solid #b96bb8;border-radius:50%;display:inline-block;animation:spin 1s linear infinite;"></span>Gerando imagem premium...</div>';
+                document.body.appendChild(overlay);
 
-        // Overlay de loading
-        let overlay = document.createElement('div');
-        overlay.id = 'img-loading-overlay';
-        overlay.style.position = 'fixed';
-        overlay.style.top = 0;
-        overlay.style.left = 0;
-        overlay.style.width = '100vw';
-        overlay.style.height = '100vh';
-        overlay.style.background = 'rgba(255,255,255,0.7)';
-        overlay.style.display = 'flex';
-        overlay.style.alignItems = 'center';
-        overlay.style.justifyContent = 'center';
-        overlay.style.zIndex = 9999;
-        overlay.innerHTML = '<div style="background:rgba(255,255,255,0.9);padding:24px 32px;border-radius:18px;box-shadow:0 4px 24px 0 rgba(180,120,200,0.13);font-size:1.2rem;color:#b96bb8;display:flex;align-items:center;gap:10px;"><span class="loader" style="width:24px;height:24px;border:3px solid #e9b6d2;border-top:3px solid #b96bb8;border-radius:50%;display:inline-block;animation:spin 1s linear infinite;"></span>Gerando imagem...</div>';
-        document.body.appendChild(overlay);
+                // Dados para exportação
+                const dashboard = document.getElementById('dashboard');
+                const produtosLista = document.getElementById('produtos-lista');
+                const chartCanvas = document.getElementById('lucroChart');
+                if (!dashboard || !produtosLista || !chartCanvas) {
+                        document.body.removeChild(overlay);
+                        alert('Não foi possível capturar os dados.');
+                        return;
+                }
 
-        // Captura apenas dashboard e cards de produtos
-        const dashboard = document.getElementById('dashboard');
-        const produtosLista = document.getElementById('produtos-lista');
-        if (!dashboard || !produtosLista) {
-            document.body.removeChild(overlay);
-            alert('Não foi possível capturar os dados.');
-            return;
-        }
+                // Dados de resumo
+                let totalInvestido = document.getElementById('total-investido').textContent;
+                let totalVendido = document.getElementById('total-vendido').textContent;
+                let lucroTotal = document.getElementById('lucro-total').textContent;
+                let qtdVendas = 0;
+                let topProduto = '';
+                let maiorLucro = -Infinity;
+                let produtos = [];
+                produtosLista.querySelectorAll('.card').forEach(card => {
+                        let nome = card.querySelector('strong')?.textContent || '';
+                        let lucro = 0;
+                        card.querySelectorAll('span').forEach(span => {
+                                if (span.textContent.toLowerCase().includes('lucro total')) {
+                                        let val = span.querySelector('b')?.textContent?.replace(/[^\d,.-]/g, '').replace(',', '.') || '0';
+                                        lucro = parseFloat(val);
+                                }
+                        });
+                        produtos.push({ nome, lucro });
+                        if (lucro > maiorLucro) {
+                                maiorLucro = lucro;
+                                topProduto = nome;
+                        }
+                        qtdVendas++;
+                });
 
-        // Criar wrapper temporário para exportação
-        const exportWrapper = document.createElement('div');
-        exportWrapper.style.background = '#fff';
-        exportWrapper.style.padding = '24px 8px';
-        exportWrapper.style.borderRadius = '24px';
-        exportWrapper.style.maxWidth = '430px';
-        exportWrapper.style.margin = '0 auto';
-        exportWrapper.style.display = 'flex';
-        exportWrapper.style.flexDirection = 'column';
-        exportWrapper.style.gap = '18px';
-        exportWrapper.style.boxShadow = '0 8px 48px 0 rgba(180,120,200,0.18)';
-        exportWrapper.style.color = '#111';
-        exportWrapper.style.fontWeight = '700';
-        exportWrapper.style.textShadow = 'none';
+                // Clonar gráfico como imagem
+                let chartImg = chartCanvas.toDataURL('image/png', 1.0);
 
-        // Forçar apenas texto preto nos elementos filhos (sem sobrescrever fundo)
-        setTimeout(() => {
-            exportWrapper.querySelectorAll('*').forEach(el => {
-                el.style.color = '#111';
-                el.style.textShadow = 'none';
-                el.style.fontWeight = '700';
-            });
-        }, 0);
+                // Data atual
+                let dataAtual = new Date();
+                let dataStr = dataAtual.toLocaleDateString('pt-BR');
 
-        // Clonar dashboard e cards de produtos
-        exportWrapper.appendChild(dashboard.cloneNode(true));
-        if (produtosLista.childElementCount > 0) {
-            const cardsClone = produtosLista.cloneNode(true);
-            exportWrapper.appendChild(cardsClone);
-        }
+                // Criar container premium para exportação
+                const exportDiv = document.createElement('div');
+                exportDiv.id = 'export-image';
+                exportDiv.innerHTML = `
+                <div class="export-gradient">
+                    <div class="export-header">
+                        <div class="export-title"><span class="icon">📊</span> Relatório de Vendas</div>
+                        <div class="export-subtitle">Resumo financeiro do período</div>
+                        <div class="export-date">${dataStr}</div>
+                    </div>
+                    <div class="export-dashboard">
+                        <div class="export-card">
+                            <span class="icon">💰</span>
+                            <span>Total Investido</span>
+                            <strong>${totalInvestido}</strong>
+                        </div>
+                        <div class="export-card">
+                            <span class="icon">🛒</span>
+                            <span>Total Vendido</span>
+                            <strong>${totalVendido}</strong>
+                        </div>
+                        <div class="export-card">
+                            <span class="icon">📈</span>
+                            <span>Lucro Total</span>
+                            <strong>${lucroTotal}</strong>
+                        </div>
+                        <div class="export-card">
+                            <span class="icon">🏆</span>
+                            <span>Top Produto</span>
+                            <strong>${topProduto || '-'}</strong>
+                        </div>
+                    </div>
+                    <div class="export-section">
+                        <div class="export-section-title">Gráfico de Lucro</div>
+                        <img src="${chartImg}" class="export-chart-img" alt="Gráfico de Lucro" />
+                    </div>
+                    <div class="export-section">
+                        <div class="export-section-title">Histórico de Vendas</div>
+                        <div class="export-historico">
+                            ${produtos.length > 0 ? produtos.map(p => `<div class='export-produto'><span class='icon'>📦</span> <b>${p.nome}</b> <span class='lucro'>${p.lucro.toLocaleString('pt-BR', {style:'currency',currency:'BRL'})}</span></div>`).join('') : '<div class="export-vazio">Nenhuma venda registrada.</div>'}
+                        </div>
+                    </div>
+                    <div class="export-resumo">
+                        <div><span class="icon">🔢</span> Total de vendas realizadas: <b>${qtdVendas}</b></div>
+                        <div><span class="icon">💡</span> Margem de lucro: <b>${lucroTotal && totalInvestido && totalInvestido !== 'R$ 0,00' ? ((parseFloat(lucroTotal.replace(/[^\d,.-]/g, '').replace(',', '.')) / parseFloat(totalInvestido.replace(/[^\d,.-]/g, '').replace(',', '.')) * 100).toFixed(1) : '0.0'}%</b></div>
+                    </div>
+                    <div class="export-motivacional">✨ Continue crescendo! Compartilhe seu sucesso. ✨</div>
+                    <div class="export-footer">Feito com <span class="icon">💜</span> por Bruna | bruCalculo</div>
+                </div>
+                `;
+                document.body.appendChild(exportDiv);
 
-        document.body.appendChild(exportWrapper);
+                // Esperar renderização
+                await new Promise(r => setTimeout(r, 100));
 
-        await html2canvas(exportWrapper, {
-            backgroundColor: '#f8e1f4',
-            scale: window.devicePixelRatio || 2,
-            useCORS: true,
-            allowTaint: true,
-            scrollY: -window.scrollY
-        }).then(canvas => {
-            let data = new Date();
-            let dataStr = data.toISOString().slice(0,10);
-            let link = document.createElement('a');
-            link.download = `resultado-vendas-${dataStr}.jpg`;
-            link.href = canvas.toDataURL('image/jpeg', 0.95);
-            link.click();
-        }).catch(() => {
-            alert('Erro ao gerar imagem.');
+                await html2canvas(exportDiv, {
+                        backgroundColor: "#fff",
+                        scale: 3,
+                        useCORS: true,
+                        allowTaint: true
+                }).then(canvas => {
+                        let data = new Date();
+                        let dataStr = data.toISOString().slice(0,10);
+                        let link = document.createElement('a');
+                        link.download = `relatorio-vendas-${dataStr}.jpg`;
+                        link.href = canvas.toDataURL('image/jpeg', 0.98);
+                        link.click();
+                }).catch(() => {
+                        alert('Erro ao gerar imagem.');
+                });
+
+                // Remover overlay e container temporário
+                document.body.removeChild(overlay);
+                document.body.removeChild(exportDiv);
         });
-
-        // Remover overlay e wrapper temporário
-        document.body.removeChild(overlay);
-        document.body.removeChild(exportWrapper);
-    });
 }
 
 // Loader animado
