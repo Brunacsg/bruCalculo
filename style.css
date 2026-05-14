@@ -1,0 +1,213 @@
+/*
+    Paleta: Rosa claro, lilás, branco, sombras suaves
+    Fonte: Montserrat
+    Glassmorphism leve
+*/
+:root {
+    --rosa: #f8e1f4;
+    --lilas: #e1e1fa;
+    --branco: #fff;
+    --rosa-escuro: #e9b6d2;
+    --lilas-escuro: #bfaee0;
+    --sombra: 0 4px 24px 0 rgba(180, 120, 200, 0.10);
+    --borda: rgba(255,255,255,0.4);
+    --fonte: 'Montserrat', sans-serif;
+}
+* {
+    box-sizing: border-box;
+    font-family: var(--fonte);
+}
+body {
+    margin: 0;
+    background: linear-gradient(135deg, var(--rosa), var(--lilas));
+    min-height: 100vh;
+    color: #6d4c7d;
+}
+.container {
+    max-width: 430px;
+    margin: 0 auto;
+    padding: 16px 8px 32px 8px;
+}
+header {
+    text-align: center;
+    margin-bottom: 16px;
+}
+header h1 {
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: #b96bb8;
+    letter-spacing: 1px;
+    margin: 0;
+}
+form {
+    background: rgba(255,255,255,0.7);
+    border-radius: 22px;
+    box-shadow: var(--sombra);
+    padding: 18px 14px 10px 14px;
+    margin-bottom: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border: 1.5px solid var(--borda);
+}
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.input-group label {
+    font-size: 1rem;
+    color: #b96bb8;
+    font-weight: 600;
+}
+.input-group input {
+    border: none;
+    border-radius: 12px;
+    padding: 10px;
+    font-size: 1.1rem;
+    background: rgba(255,255,255,0.9);
+    box-shadow: 0 1px 4px 0 rgba(180, 120, 200, 0.07);
+    outline: none;
+    transition: box-shadow 0.2s;
+}
+.input-group input:focus {
+    box-shadow: 0 2px 8px 0 rgba(180, 120, 200, 0.18);
+}
+.btn-add {
+    background: linear-gradient(90deg, var(--rosa-escuro), var(--lilas-escuro));
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 16px;
+    padding: 12px 0;
+    margin-top: 8px;
+    box-shadow: var(--sombra);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+.btn-add:hover {
+    background: linear-gradient(90deg, var(--lilas-escuro), var(--rosa-escuro));
+    transform: scale(1.03);
+}
+.dashboard {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+    justify-content: space-between;
+}
+.dash-card {
+    flex: 1;
+    background: rgba(255,255,255,0.6);
+    border-radius: 18px;
+    box-shadow: var(--sombra);
+    padding: 10px 6px;
+    text-align: center;
+    border: 1.2px solid var(--borda);
+    margin: 0 2px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.dash-card span {
+    font-size: 0.95rem;
+    color: #b96bb8;
+}
+.dash-card strong {
+    font-size: 1.1rem;
+    color: #6d4c7d;
+}
+.produtos-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+.card {
+    background: rgba(255,255,255,0.7);
+    border-radius: 22px;
+    box-shadow: var(--sombra);
+    padding: 16px 14px 12px 14px;
+    border: 1.5px solid var(--borda);
+    position: relative;
+    transition: box-shadow 0.2s, transform 0.1s;
+    animation: fadeIn 0.5s;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.card .remove-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #f8e1f4;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    font-size: 1.2rem;
+    color: #b96bb8;
+    box-shadow: 0 2px 8px 0 rgba(180, 120, 200, 0.13);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.card .remove-btn:hover {
+    background: #e9b6d2;
+    color: #fff;
+    transform: scale(1.08);
+}
+.card .info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.card .info strong {
+    color: #b96bb8;
+    font-size: 1.1rem;
+}
+.card .info span {
+    font-size: 0.98rem;
+    color: #6d4c7d;
+}
+.grafico-section {
+    background: rgba(255,255,255,0.6);
+    border-radius: 18px;
+    box-shadow: var(--sombra);
+    padding: 12px 8px 8px 8px;
+    border: 1.2px solid var(--borda);
+    margin-bottom: 18px;
+}
+canvas#lucroChart {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 180px !important;
+}
+footer {
+    text-align: center;
+    color: #b96bb8;
+    font-size: 1rem;
+    margin-top: 18px;
+    opacity: 0.8;
+}
+@media (max-width: 600px) {
+    .container {
+        padding: 8px 2px 24px 2px;
+    }
+    header h1 {
+        font-size: 1.4rem;
+    }
+    .dashboard {
+        flex-direction: column;
+        gap: 8px;
+    }
+    .dash-card {
+        padding: 8px 4px;
+    }
+    .card {
+        padding: 12px 8px 10px 8px;
+    }
+}
