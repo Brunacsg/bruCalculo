@@ -4,5 +4,10 @@
   "description": "App web de controle de lucro de produtos",
   "scripts": {},
   "author": "Bruna",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^30.4.2",
+    "jest-environment-jsdom": "^30.4.1",
+    "jsdom": "^29.1.1"
+  }
 }

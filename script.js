@@ -214,87 +214,83 @@ function formatarDataBR(dataISO) {
     return `${dia}/${mes}/${ano}`;
 }
 
-// PDF - jsPDF
-if (btnPDF) {
-    btnPDF.addEventListener('click', function() {
-        if (!window.jspdf || !window.jspdf.jsPDF) {
-            alert('jsPDF não carregado!');
-            return;
-        }
-        const doc = new window.jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-        const pageWidth = doc.internal.pageSize.getWidth();
-        let y = 16;
-        // Título
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(18);
-        doc.text('Controle de Lucro de Produtos', pageWidth/2, y, { align: 'center' });
-        y += 10;
-        doc.setFontSize(11);
-        doc.setFont('helvetica', 'normal');
-        doc.text(`Gerado em: ${formatarDataHoraBR(new Date())}`, pageWidth/2, y, { align: 'center' });
-        y += 10;
-        // Cabeçalho da tabela
-        doc.setFontSize(10);
-        doc.setFont('helvetica', 'bold');
-        // Definir larguras das colunas
-        const colunas = [
-            { label: 'Produto', width: 40 },
-            { label: 'Data', width: 22 },
-            { label: 'Custo', width: 22 },
-            { label: 'Venda', width: 22 },
-            { label: 'Qtd', width: 14 },
-            { label: 'Lucro/un', width: 22 },
-            { label: 'Lucro total', width: 28 }
-        ];
-        let x = 10;
-        colunas.forEach(col => {
-            doc.text(col.label, x, y, { align: 'left' });
-            x += col.width;
+
+// Salvar como Imagem (html2canvas)
+const btnImg = document.getElementById('btn-img');
+if (btnImg) {
+    btnImg.addEventListener('click', async function() {
+        // Elemento a capturar: container principal
+        const container = document.querySelector('.container');
+        if (!container) return;
+
+        // Overlay de loading
+        let overlay = document.createElement('div');
+        overlay.id = 'img-loading-overlay';
+        overlay.style.position = 'fixed';
+        overlay.style.top = 0;
+        overlay.style.left = 0;
+        overlay.style.width = '100vw';
+        overlay.style.height = '100vh';
+        overlay.style.background = 'rgba(255,255,255,0.7)';
+        overlay.style.display = 'flex';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'center';
+        overlay.style.zIndex = 9999;
+        overlay.innerHTML = '<div style="background:rgba(255,255,255,0.9);padding:24px 32px;border-radius:18px;box-shadow:0 4px 24px 0 rgba(180,120,200,0.13);font-size:1.2rem;color:#b96bb8;display:flex;align-items:center;gap:10px;"><span class="loader" style="width:24px;height:24px;border:3px solid #e9b6d2;border-top:3px solid #b96bb8;border-radius:50%;display:inline-block;animation:spin 1s linear infinite;"></span>Gerando imagem...</div>';
+        document.body.appendChild(overlay);
+
+        // Opção de formato story
+        let formatoStory = confirm('Deseja salvar no formato Story (1080x1920)? Clique em Cancelar para capturar como está na tela.');
+        let scale = formatoStory ? 3 : window.devicePixelRatio || 2;
+        let width = formatoStory ? 1080 : container.offsetWidth;
+        let height = formatoStory ? 1920 : container.offsetHeight;
+
+        // Wrapper para margens e sombra
+        let wrapper = document.createElement('div');
+        wrapper.style.background = '#f8e1f4';
+        wrapper.style.padding = formatoStory ? '60px 30px' : '32px 8px';
+        wrapper.style.borderRadius = '32px';
+        wrapper.style.boxShadow = '0 8px 48px 0 rgba(180,120,200,0.18)';
+        wrapper.style.display = 'flex';
+        wrapper.style.justifyContent = 'center';
+        wrapper.style.alignItems = 'center';
+        wrapper.style.width = width + 'px';
+        wrapper.style.height = height + 'px';
+        wrapper.style.overflow = 'hidden';
+        wrapper.appendChild(container.cloneNode(true));
+        document.body.appendChild(wrapper);
+
+        // Captura
+        await html2canvas(wrapper, {
+            backgroundColor: '#f8e1f4',
+            scale: scale,
+            width: width,
+            height: height,
+            useCORS: true,
+            allowTaint: true,
+            scrollY: -window.scrollY
+        }).then(canvas => {
+            // Download
+            let data = new Date();
+            let dataStr = data.toISOString().slice(0,10);
+            let link = document.createElement('a');
+            link.download = `resultado-vendas-${dataStr}.png`;
+            link.href = canvas.toDataURL('image/png', 1.0);
+            link.click();
+        }).catch(() => {
+            alert('Erro ao gerar imagem.');
         });
-        y += 6;
-        doc.setFont('helvetica', 'normal');
-        // Linhas da tabela
-        produtos.forEach((p) => {
-            let x = 10;
-            // Truncar nome se muito longo
-            let nome = p.nome.length > 20 ? p.nome.substring(0, 19) + '…' : p.nome;
-            doc.text(nome, x, y, { maxWidth: colunas[0].width - 2, align: 'left' });
-            x += colunas[0].width;
-            doc.text(p.data ? formatarDataBR(p.data) : '-', x, y, { align: 'left' });
-            x += colunas[1].width;
-            doc.text(formatarMoeda(p.custo), x, y, { align: 'right' });
-            x += colunas[2].width;
-            doc.text(formatarMoeda(p.venda), x, y, { align: 'right' });
-            x += colunas[3].width;
-            doc.text(String(p.quantidade), x, y, { align: 'right' });
-            x += colunas[4].width;
-            doc.text(formatarMoeda(p.lucroUnidade), x, y, { align: 'right' });
-            x += colunas[5].width;
-            doc.text(formatarMoeda(p.lucroTotal), x, y, { align: 'right' });
-            y += 7;
-            if (y > 270) {
-                doc.addPage();
-                y = 16;
-            }
-        });
-        y += 5;
-        // Totais
-        let investido = 0, vendido = 0, lucro = 0;
-        produtos.forEach(p => {
-            investido += p.custo * p.quantidade;
-            vendido += p.venda * p.quantidade;
-            lucro += (p.venda - p.custo) * p.quantidade;
-        });
-        doc.setFont('helvetica', 'bold');
-        doc.text('Totais:', 10, y);
-        doc.setFont('helvetica', 'normal');
-        doc.text(`Investido: ${formatarMoeda(investido)}`, 50, y);
-        doc.text(`Vendido: ${formatarMoeda(vendido)}`, 100, y);
-        doc.text(`Lucro: ${formatarMoeda(lucro)}`, 150, y);
-        // Download
-        doc.save('relatorio_lucro.pdf');
+
+        // Remover overlay e wrapper
+        document.body.removeChild(overlay);
+        document.body.removeChild(wrapper);
     });
 }
+
+// Loader animado
+const style = document.createElement('style');
+style.innerHTML = `@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}`;
+document.head.appendChild(style);
 
 function formatarDataHoraBR(date) {
     return date.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });

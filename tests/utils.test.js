@@ -1,0 +1,1 @@
+describe('Funções de moeda', () => {
